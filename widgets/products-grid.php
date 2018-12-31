@@ -13,7 +13,7 @@ class Elementor_The100_Product_Section_Widget extends \Elementor\Widget_Base {
 
 	public function get_icon() {
       	// Icon name from the Elementor font file
-		return 'eicon-slider-full-screen';
+		return 'eicon-products';
 	}
 
 	public function get_categories() {
