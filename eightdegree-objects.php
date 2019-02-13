@@ -3,7 +3,7 @@
  * Plugin Name: EightDegree Objects
  * Description: An addition to elementor objects with themes developed by 8DegreeThemes.
  * Plugin URI:  https://8degreethemes.com/plugins/eightdegree-objects/
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      8DegreeThemes
  * Author URI:  https://8degreethemes.com/
  * Text Domain: eightdegree-objects
@@ -54,7 +54,7 @@ final class EightDegree_Objects {
 	 *
 	 * @var string Minimum PHP version required to run the plugin.
 	 */
-	const MINIMUM_PHP_VERSION = '7.0';
+	const MINIMUM_PHP_VERSION = '5.0';
 
 	/**
 	 * Instance
@@ -271,6 +271,8 @@ final class EightDegree_Objects {
 		// Load main script
 		wp_enqueue_script( 'the100-elementor-script', plugins_url( '/assets/js/the100-elementor-script.js', __FILE__ ) );
 
+		wp_enqueue_script( 'youtube-api', plugins_url( '/assets/js/iframe-api.js', __FILE__ ) );
+
 	}
 	function widget_categories( $elements_manager ) {
 		//eicons library https://pojome.github.io/elementor-icons/
@@ -303,6 +305,7 @@ final class EightDegree_Objects {
 		require_once( __DIR__ . '/widgets/aboutservice-section.php' );
 		require_once( __DIR__ . '/widgets/testimonial-section.php' );
 		require_once( __DIR__ . '/widgets/blog-settings.php' );
+		require_once( __DIR__ . '/widgets/youtube-videoslider.php' );
 		
 		// Register widget
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_The100_Main_Slider_Widget() );
@@ -320,6 +323,8 @@ final class EightDegree_Objects {
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_The100_Testimonial_Section_Widget() );
 		// Register widget
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_The100_Blog_Section_Widget() );
+		//Register Widget
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_The100_Ytvideosl_Widget() );
 		
 		
 		if(class_exists('woocommerce')){

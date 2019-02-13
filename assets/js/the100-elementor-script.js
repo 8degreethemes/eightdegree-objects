@@ -113,5 +113,32 @@ jQuery(document).ready(function($){
 		}
 	});
 
-	
+	$(".ytvideosl-section.lay-slider .the100-pro-video-thumbnails").owlCarousel({
+		items:5,
+		rtl: rtoleft,
+		loop: false,
+		autoplay:false,
+		autoplayTimeout:5000,
+		autoplaySpeed:1000,
+		autoplayHoverPause:true,
+		margin:20,
+		nav: true,
+		dots: false,
+		stagePadding: 20,
+		animateOut: 'slideOutLeft',
+		responsive: {
+			0:{
+				items:1
+			},
+			640:{
+				items:2
+			},
+			768:{
+				items:3
+			},
+			1024:{
+				items:5
+			}
+		}
+	});	
 });

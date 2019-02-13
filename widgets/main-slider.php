@@ -121,6 +121,7 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 					'lay-seven' => __('Layout Seven', 'the100-pro'),
 					'lay-eight' => __('Layout Eight', 'the100-pro'),
 					'lay-nine' => __('Layout Nine', 'the100-pro'),
+					'lay-ten' => __('Layout Ten', 'the100-pro'),
 				],
 			]
 		);
@@ -207,11 +208,11 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 					'slideOutRight' => __( 'Slide Right', 'the100' ),
 					'slideOutUp' => __( 'Slide Up', 'the100' ),
 					'slideOutDown' => __( 'Slide Down', 'the100' ),
-                    'rotateOut' => __( 'Rotate', 'the100' ),
-                    'flip' => __( 'Flip', 'the100' ),
-                    'bounceOut' => __( 'Bounce', 'the100' ),
-                    'lightSpeedOut' => __( 'LightSpeed', 'the100' ),
-                    'zoomOut' => __( 'Zoom', 'the100' ),
+					'rotateOut' => __( 'Rotate', 'the100' ),
+					'flip' => __( 'Flip', 'the100' ),
+					'bounceOut' => __( 'Bounce', 'the100' ),
+					'lightSpeedOut' => __( 'LightSpeed', 'the100' ),
+					'zoomOut' => __( 'Zoom', 'the100' ),
 					'fadeOut' => __( 'Fade', 'the100' ),
 				],
 				'condition' => [
@@ -226,7 +227,7 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 			[
 				'label' => __( 'Show Total Number', 'the100' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
-				'default' => 'yes',
+				'default' => 'no',
 				'options' => [
 					'yes' => __( 'Yes', 'the100' ),
 					'no' => __( 'No', 'the100' ),
@@ -240,7 +241,21 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 			[
 				'label' => __( 'Show Image Navigation', 'the100' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
-				'default' => 'yes',
+				'default' => 'no',
+				'options' => [
+					'yes' => __( 'Yes', 'the100' ),
+					'no' => __( 'No', 'the100' ),
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'the100_cc_title_nav',
+			[
+				'label' => __( 'Show Title Pagination', 'the100' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => 'no',
 				'options' => [
 					'yes' => __( 'Yes', 'the100' ),
 					'no' => __( 'No', 'the100' ),
@@ -255,7 +270,8 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 
       // get our input from the widget settings.
 		$settings = $this->get_settings_for_display();
-
+		$sl_clas = "";
+		
 		$the100_carousel_category = ! empty( $settings['the100_carousel_category'] ) ? $settings['the100_carousel_category'] : '';
 		
 		$the100_cc_navigation = $settings['the100_cc_navigation'];
@@ -266,6 +282,15 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 		$slider_transition = $settings['the100_cc_effect'];
 		$the100_cc_numeric_page = $settings['the100_cc_numeric_page'];
 		$the100_cc_image_nav = $settings['the100_cc_image_nav'];
+		$the100_cc_title_nav = $settings['the100_cc_title_nav'];
+		if($the100_cc_title_nav == "yes") {
+			$custom_pager = "true";
+			$show_pager = "true";
+			$sl_clas = "text-pager";
+		}
+		else { 
+			$custom_pager =  "false";
+		}
 		$slider_autoplay_speed = $settings['the100_cc_autoplay_speed'];
 		$slider_speed = $settings['the100_cc_speed'];
 		$the100_cc_slides_to_show = (!empty($settings['the100_cc_slides_to_show']))?$settings['the100_cc_slides_to_show']:1;
@@ -284,7 +309,8 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 						if($('body').hasClass('rtl')){
 							var rtoleft = true;
 						}
-						$("#main-slider").owlCarousel({
+						var owl = $("#main-slider");
+						owl.owlCarousel({
 							items:<?php echo esc_attr($the100_cc_slides_to_show); ?>,
 							rtl: rtoleft,
 							loop: <?php echo esc_attr($the100_cc_infinite_loop); ?>,
@@ -294,9 +320,11 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 							autoplayHoverPause:<?php echo esc_attr($pause_on_hover); ?>,
 							nav: <?php echo esc_attr($show_controls); ?>,
 							dots: <?php echo esc_attr($show_pager); ?>,
+							dotsData:<?php echo esc_attr($custom_pager); ?>,
 							animateOut: '<?php echo esc_attr($slider_transition); ?>',
 							responsive: {
 								360:{
+									dotsEach: 3,
 									items:<?php echo esc_attr($the100_cc_slides_to_show_mobile); ?>,
 								},
 								768:{
@@ -345,6 +373,18 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 							$('.navPrev').find('h5').html(title_prev);
 							$('.navNext').find('h5').html(title_next);
 						});
+						
+						$('#main-slider.text-pager').on('changed.owl.carousel', function(property) {
+							var currentIndex = $('#main-slider .owl-item.active').next();
+							$('#main-slider.text-pager .owl-dot').hide();
+							var pager_current = currentIndex.find(".slides").attr('data-index');
+							var pager_prev = currentIndex.prev('.owl-item').find(".slides").attr('data-index');
+							var pager_next = currentIndex.next('.owl-item').find(".slides").attr('data-index');
+							//console.log(pager_prev+">"+pager_current+">"+pager_next+">>");
+							$('#main-slider.text-pager .owl-dot').eq(pager_prev-1).show();
+							$('#main-slider.text-pager .owl-dot').eq(pager_current-1).show();
+							$('#main-slider.text-pager .owl-dot').eq(pager_next-1).show();
+						});
 
 						$('#main-slider').on('translated.owl.carousel', function(event) {
 							$('.navPrev').removeClass('on');
@@ -374,15 +414,16 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 						<div class="number-total">
 						</div>
 					<?php }?>
-					<div id="main-slider" class="owl-slider owl-carousel owl-theme">
+					<div id="main-slider" class="owl-slider owl-carousel owl-theme <?php echo esc_attr($sl_clas);?>">
 						<?php
 						$loop = new WP_Query(array('cat' => $the100_carousel_category,'post_status'=>'publish','posts_per_page' => -1));
 						$the100_overlay = $settings['the100_home_slider_overlay'];
 						if($loop->have_posts()){
+							$sn = 1;
 							while($loop->have_posts()){
 								$loop-> the_post();                    
 								?>
-								<div class="slides overlay-<?php echo esc_attr($the100_overlay);?>" data-navipicture="<?php echo get_the_post_thumbnail_url(get_the_ID(), 'medium');?>">
+								<div class="slides overlay-<?php echo esc_attr($the100_overlay);?>" data-navipicture="<?php echo get_the_post_thumbnail_url(get_the_ID(), 'medium');?>" data-index="<?php echo esc_attr($sn); ?>" data-dot="<?php echo esc_attr('<i>0'.$sn.'</i><b>'.get_the_title().'</b>');?>">
 									<?php
 									if(has_post_thumbnail()){
 										the_post_thumbnail('full');
@@ -392,11 +433,10 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 											<div class="ed-container">
 												<div class="slider-caption">
 													<h2 class="small-caption"> 
-														<?php the_title(); ?>										
+														<?php the_title(); ?>								
 													</h2>
 													<div class="slider-content">
-														<?php the_excerpt(); 
-														?>
+														<?php the_excerpt();?>
 													</div>
 												</div>
 											</div>
@@ -405,6 +445,7 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 									endif; ?> 
 								</div>
 								<?php 
+								$sn++;
 							}
 							wp_reset_query();
 						}?>
@@ -433,10 +474,12 @@ class Elementor_The100_Main_Slider_Widget extends \Elementor\Widget_Base {
 							<div class="icon-nav">
 								<i class="fa fa-angle-right"></i>
 							</div>
-						</div> 
-					</div> 
-					<?php
-				}
+						</div>  
+						<?php
+					}
+					?>
+				</div>
+				<?php
 			}
 		}
 

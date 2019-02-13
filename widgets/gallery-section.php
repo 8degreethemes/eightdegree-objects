@@ -74,6 +74,8 @@ class Elementor_The100_Gallery_Section_Widget extends \Elementor\Widget_Base {
 					'lay-one' => __( 'Layout 1', 'the100' ),
 					'lay-two' => __( 'Layout 2', 'the100' ),
 					'lay-three' => __( 'Layout 3', 'the100' ),
+					'lay-four' => __( 'Layout 4', 'the100' ),
+					'lay-five' => __( 'Layout 5', 'the100' ),
 				],
 				'frontend_available' => true,
 			]
@@ -96,8 +98,8 @@ class Elementor_The100_Gallery_Section_Widget extends \Elementor\Widget_Base {
 			<?php
 			echo '<div class="ed-container">';
 			echo '<div class="gallery-inner-wrap">';
-			?>
-			<?php if($the100_gallery_title!='' || $the100_gallery_desc!=''){ ?>
+			
+			if($the100_gallery_title!='' || $the100_gallery_desc!=''){ ?>
 				<div class="title-desc-wrap">
 					<?php if($the100_gallery_title!=''){ ?>
 						<h2 class="section-title wow fadeInLeft"><span><?php echo wp_kses_post($the100_gallery_title);?></span></h2>
@@ -106,51 +108,87 @@ class Elementor_The100_Gallery_Section_Widget extends \Elementor\Widget_Base {
 						<div class="section-desc wow fadeInRight"><?php echo wp_kses_post(force_balance_tags($the100_gallery_desc));?></div>
 						<?php
 					}?>
-				</div>
-				<?php
-			}
-			if($the100_gallery_layout!='lay-three'){ echo "</div>";}
-			if($the100_gallery_layout=='lay-two'){ echo "</div>";}
-			$the100_gallery_cat = (!empty($settings['the100_section_gallery_category']))?$settings['the100_section_gallery_category']:"";
-			if($the100_gallery_cat>0){
-				$gpp=6;
-				if($the100_gallery_layout=='lay-three'){
-					$gpp = 4;
+					</div>
+					<?php
 				}
-				$gallery = new WP_Query(array('cat' => $the100_gallery_cat,'post_status'=>'publish','posts_per_page' => $gpp));
-				if($gallery->have_posts()){
-					echo "<div class='gallery-posts-wrap'>";
-					while($gallery->have_posts()){
-						$gallery-> the_post();
-						echo "<div class='gallery-posts wow zoomIn'>";
-						if(has_post_thumbnail()){
-							if($the100_gallery_layout=='lay-two'){
-								the_post_thumbnail('the100-rectangle');
-							}else{
-								the_post_thumbnail('the100-square');
-							}
-						}
-						echo "<div class='gallery-titledesc-wrap'>";
-						echo "<div class='gallery-titledesc-inside-wrap'>";
-						the_title( '<h3 class="gallery-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
-						echo "<div class='gallery-excerpt'>";
-						the_excerpt();
-						echo "</div>";
-						echo "</div>";
-						echo "</div>";
-						echo "</div>";
+				if($the100_gallery_layout!='lay-three' && $the100_gallery_layout!='lay-five'){ echo "</div>";}
+				if($the100_gallery_layout=='lay-two'){ echo "</div>";}
+				$the100_gallery_cat = (!empty($settings['the100_section_gallery_category']))?$settings['the100_section_gallery_category']:"";
+				if($the100_gallery_cat>0){
+					$gpp=6;
+					if($the100_gallery_layout=='lay-three' || $the100_gallery_layout=='lay-five'){
+						$gpp = 4;
 					}
-					echo "</div>";
-					wp_reset_query();
+					$gallery = new WP_Query(array('cat' => $the100_gallery_cat,'post_status'=>'publish','posts_per_page' => $gpp));
+					if($gallery->have_posts()){
+						$sni = 1;
+						$glc = "";
+						if($the100_gallery_layout=='lay-four'){
+							$glc = " clear";
+						}
+						echo "<div class='gallery-posts-wrap".esc_attr($glc)."'>";
+						while($gallery->have_posts()){
+							$gallery-> the_post();
+							$glcc = " wow zoomIn";
+							if($the100_gallery_layout=='lay-four'){
+								$glcc = "";
+							}
+							echo "<div class='gallery-posts".$glcc."'>";
+							if(has_post_thumbnail()){
+								if($the100_gallery_layout=='lay-two' || $the100_gallery_layout=='lay-five'){
+									the_post_thumbnail('the100-rectangle');
+								}elseif($the100_gallery_layout=='lay-four'){
+									$im_size = "vh-large";
+									if($sni==2 || $sni==5 || $sni==6){
+										$im_size = "rectangle";
+									}
+									the_post_thumbnail('the100-'.$im_size);
+								}else{
+									the_post_thumbnail('the100-square');
+								}
+							}
+							echo "<div class='gallery-titledesc-wrap'>";
+							echo "<div class='gallery-titledesc-inside-wrap'>";
+							if($the100_gallery_layout=='lay-four'){
+								echo '<div class="meta-wrap">';
+								the100_posted_by();
+								the_category();
+								echo " / ";
+								the100_posted_on();
+								echo '</div>';
+							}
+							the_title( '<h3 class="gallery-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+							if($the100_gallery_layout=='lay-five'){
+								echo '<div class="meta-wrap">';
+								the_category();
+								echo " / ";
+								the100_posted_on();
+								echo '</div>';
+							}
+							if($the100_gallery_layout!='lay-five'){
+								echo "<div class='gallery-excerpt'>";
+								the_excerpt();
+								echo "</div>";
+							}
+							echo "</div>";
+							echo "</div>";
+							echo "</div>";
+							if($sni==6){
+								$sni=0;
+							}
+							$sni++;
+						}
+						echo "</div>";
+						wp_reset_query();
+					}
 				}
-			}
-			if($the100_gallery_layout=='lay-three'){ echo "</div>";}
-			if($the100_gallery_layout!='lay-two'){ echo "</div>";}
-			?>
-		</section>
-		<?php
+				if($the100_gallery_layout=='lay-three'){ echo "</div>";}
+				if($the100_gallery_layout!='lay-two'){ echo "</div>";}
+				?>
+			</section>
+			<?php
+		}
+
+		protected function _content_template() {}
+
 	}
-
-	protected function _content_template() {}
-
-}

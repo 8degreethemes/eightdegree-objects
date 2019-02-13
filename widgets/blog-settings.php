@@ -76,7 +76,19 @@ class Elementor_The100_Blog_Section_Widget extends \Elementor\Widget_Base {
 					'lay-three' => __( 'Layout 3', 'the100' ),
 					'lay-four' => __( 'Layout 4', 'the100' ),
 					'lay-five' => __( 'Layout 5', 'the100' ),
+					'lay-six' => __( 'Layout 6', 'the100' ),
+					'lay-seven' => __( 'Layout 7', 'the100' ),
 				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'the100blog_viewmore_text',
+			[
+				'label' => __( 'View More Button Text', 'the100' ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'default' => '',
 				'frontend_available' => true,
 			]
 		);
@@ -130,7 +142,7 @@ class Elementor_The100_Blog_Section_Widget extends \Elementor\Widget_Base {
 							$blog-> the_post();
 							$j = $i/2;
 							echo "<div class='blog-posts wow fadeInDown' data-wow-delay='".esc_attr($j)."s'>";
-							if($the100_blog_layout=='lay-two' || $the100_blog_layout=='lay-three' || $the100_blog_layout=='lay-five' || $the100_blog_layout=='lay-six'){
+							if($the100_blog_layout=='lay-two' || $the100_blog_layout=='lay-three' || $the100_blog_layout=='lay-five' || $the100_blog_layout=='lay-six' || $the100_blog_layout=='lay-seven'){
 								if(has_post_thumbnail()){
 									if($the100_blog_layout=='lay-two' || $the100_blog_layout=='lay-five' || $the100_blog_layout=='lay-six'){
 										echo "<div class='blog-imgtitle-wrap'>";
@@ -139,6 +151,8 @@ class Elementor_The100_Blog_Section_Widget extends \Elementor\Widget_Base {
 											the_title( '<h3 class="blog-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 										}
 										echo "</div>";
+									}elseif($the100_blog_layout=='lay-seven'){
+										the_post_thumbnail('the100-vh-large');
 									}else{
 										the_post_thumbnail('the100-square');
 									}
@@ -158,7 +172,7 @@ class Elementor_The100_Blog_Section_Widget extends \Elementor\Widget_Base {
 									$cargs = array('post_id' => get_the_ID(),'count' => true);
 									$comments = get_comments($cargs);
 									echo '<span class="blog-comment">'.esc_attr($comments).' '.esc_html('Comments','the100-pro').'</span>';
-								}elseif($the100_blog_layout!='lay-six'){
+								}elseif($the100_blog_layout!='lay-six' && $the100_blog_layout!='lay-seven'){
 									echo '<p class="blog-date">'.get_the_date('F j,Y').'</p>';
 								}
 								if($the100_blog_layout=='lay-two' || $the100_blog_layout=='lay-six'){
@@ -203,9 +217,10 @@ class Elementor_The100_Blog_Section_Widget extends \Elementor\Widget_Base {
 						echo "</div>";
 						wp_reset_postdata();
 					}
-					if($the100_blog_cat>0 && $the100_blog_layout=='lay-six'){
+					$the100blog_viewmore_text = $settings['the100blog_viewmore_text'];
+					if($the100_blog_cat>0 && $the100blog_viewmore_text!=''){
 						$the100_cat_link = get_category_link( $the100_blog_cat );
-						echo '<a class="btn btn-blog" href="'.esc_url( $the100_cat_link ).'">'. esc_html__('Go To Blog','the100-pro').'</a>';
+						echo '<div class="blog-btn-wrap"><a class="btn btn-blog" href="'.esc_url( $the100_cat_link ).'">'.$the100blog_viewmore_text.'</a></div>';
 					}
 				}
 				?>

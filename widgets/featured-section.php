@@ -77,6 +77,7 @@ class Elementor_The100_Featured_Section_Widget extends \Elementor\Widget_Base {
 					'lay-four' => __( 'Layout 4', 'the100' ),
 					'lay-five' => __( 'Layout 5', 'the100' ),
 					'lay-six' => __( 'Layout 6', 'the100' ),
+					'lay-seven' => __( 'Layout 7', 'the100' ),
 				],
 				'frontend_available' => true,
 			]
@@ -96,22 +97,30 @@ class Elementor_The100_Featured_Section_Widget extends \Elementor\Widget_Base {
 		$the100_feat_desc = (!empty($settings['the100_section_featured_description']))?$settings['the100_section_featured_description']:"";
 		?>
 		<section class="featured-section <?php echo esc_attr($the100_feat_layout);?>">
-			<div class="ed-container">
-				<?php if($the100_feat_title!=''){
-					?>
-					<h2 class="section-title wow fadeInLeft"><span><?php echo esc_html($the100_feat_title);
-					if($the100_feat_desc!='' && ($the100_feat_layout=='lay-five')){
-						?>
-						<small><?php echo wp_kses_post(force_balance_tags($the100_feat_desc));?></small>
-						<?php
-					}?>
-				</span></h2>
+			<?php
+			echo '<div class="ed-container">';
+			if($the100_feat_layout=='lay-seven'){
+				echo "<div class='td-wrap'>";
+			}
+			if($the100_feat_title!=''){
+				?>
+				<h2 class="section-title wow fadeInLeft">
+					<span>
+						<?php echo esc_html($the100_feat_title);
+						if($the100_feat_desc!='' && ($the100_feat_layout=='lay-five')){ ?>
+							<small><?php echo wp_kses_post(force_balance_tags($the100_feat_desc));?></small>
+						<?php } ?>
+					</span>
+				</h2>
 				<?php
 			}
 			if($the100_feat_desc!='' && ($the100_feat_layout!='lay-five')){
 				?>
 				<div class="section-desc wow fadeInRight"><?php echo wp_kses_post(force_balance_tags($the100_feat_desc));?></div>
 				<?php
+			}
+			if($the100_feat_layout=='lay-seven'){
+				echo "</div>";
 			}
 			if($the100_feat_layout=='lay-four'){
 				echo "</div>";
@@ -124,23 +133,43 @@ class Elementor_The100_Featured_Section_Widget extends \Elementor\Widget_Base {
 				elseif ( $the100_feat_layout=='lay-six') {$postnum=4;}
 				$feat = new WP_Query(array('cat' => $the100_feat_cat,'post_status'=>'publish','posts_per_page' => $postnum));
 				if($feat->have_posts()){
+					$sn=1;
 					echo "<div class='featured-posts-wrap'>";
 					while($feat->have_posts()){
 						$feat-> the_post();
 						echo "<div class='featured-posts wow pulse'>";
-						if($the100_feat_layout=='lay-two' || $the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six'){ echo "<div class='feat-imgtitle-wrap'>";}
-						if(has_post_thumbnail()){
-							the_post_thumbnail('the100-rectangle');
+						if($the100_feat_layout=='lay-two' || $the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six' || $the100_feat_layout=='lay-seven'){ echo "<div class='feat-imgtitle-wrap'>";}
+						if($the100_feat_layout=='lay-seven'){
+							echo '<span>'.$sn.'</span>';
 						}
-						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six'){ echo "</div>";}
-						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six'){ echo "<div class='feat-content-wrap'>";}
+						if(has_post_thumbnail()){
+							if($the100_feat_layout=='lay-seven'){
+								echo '<div class="image-wrap">';
+								the_post_thumbnail('the100-square');
+								echo '</div>';
+							}else{
+								the_post_thumbnail('the100-rectangle');
+							}
+						}
+						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six' || $the100_feat_layout=='lay-seven'){ echo "</div>";}
+						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six' || $the100_feat_layout=='lay-seven'){ echo "<div class='feat-content-wrap'>";}
+						if($the100_feat_layout=='lay-seven'){
+							echo '<div class="meta-wrap">';
+							the_category();
+							echo " / ";
+							the100_posted_on();
+							echo '</div>';
+						}
 						the_title( '<h3 class="feat-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 						if($the100_feat_layout=='lay-two'){ echo "</div>";}
-						echo "<div class='feat-excerpt'>";
-						the_excerpt();
+						if($the100_feat_layout!='lay-seven'){
+							echo "<div class='feat-excerpt'>";
+							the_excerpt();
+							echo "</div>";
+						}
+						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six' || $the100_feat_layout=='lay-seven'){ echo "</div>";}
 						echo "</div>";
-						if($the100_feat_layout=='lay-four' || $the100_feat_layout=='lay-six'){ echo "</div>";}
-						echo "</div>";
+						$sn++;
 					}
 					echo "</div>";
 					wp_reset_query();
