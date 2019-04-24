@@ -166,7 +166,7 @@ class Elementor_The100_ProductCat_Section_Widget extends \Elementor\Widget_Base 
 										<div class="promo-cat-image">
 											<a href="<?php echo esc_url( $terms_link ); ?>">
 												<?php 
-												$thumbnail_id = get_woocommerce_term_meta($promo_category, 'thumbnail_id', true);
+												$thumbnail_id = get_term_meta($promo_category, 'thumbnail_id', true);
 												if (!empty($thumbnail_id)) {
 													$image = wp_get_attachment_image_src($thumbnail_id, 'full');
 													echo '<img src="' . esc_url($image[0]) . '" alt="'.esc_attr($terms_name->name).'"/>';
